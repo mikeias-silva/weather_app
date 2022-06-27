@@ -3,6 +3,7 @@ import { useState } from 'react'
 import axios from 'axios';
 const Search = () => {
   const [city, setCity] = useState("");
+  const [tempo, setTempo] = useState("");
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -11,6 +12,7 @@ const Search = () => {
     axios.get(url)
       .then(function (response) {
         console.log(response.data)
+        setTempo(response.data);
       });
   }
 
@@ -25,6 +27,10 @@ const Search = () => {
             onChange={(e) => setCity(e.target.value)}
           />
           <button onClick={handleSubmit}>Buscar</button>
+          <div className="mt-5">
+            <h2>{tempo.name}</h2>
+            <p>{JSON.stringify(tempo)}</p>
+          </div>
         </div>
       </div>
     </div>
