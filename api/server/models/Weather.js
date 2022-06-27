@@ -9,7 +9,7 @@ const Weather = {
         let url = `${app_url}q=${city}&appid=${token}`;
         let data = axios.get(url)
         let response = await data;
-        return response;
+        return response.data;
     }
 }
 
