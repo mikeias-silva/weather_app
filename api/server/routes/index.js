@@ -6,6 +6,8 @@ route.get('/', (req, res) => res.send("oi"))
 
 route.get('/:city', weatherController.byCity);
 
+route.get('/previsaoTempo/:city', weatherController.previsao);
+
 
 
 export default route;

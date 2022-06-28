@@ -10,7 +10,6 @@ const Weather = {
         // let url = `https://api.openweathermap.org/data/2.5/onecall?lat=-25.094994&lon=-50.159667&appid=${token}&lang=pt_br&units=metric`
         let data = axios.get(url)
         let response = await data;
-        // console.log(response    )
         const dados = Weather.tempoDia(response.data);
         return dados;
     },
@@ -45,7 +44,31 @@ const Weather = {
         }
 
         return tempo
+    },
+    async previsaoTempo(city) {
+        const token = `${env.API_TOKEN_OPENWEATHER}`;
+        const url = `http://api.openweathermap.org/geo/1.0/direct?q=${city}&appid=${token}&limit=1`;
+
+        let data = axios.get(url);
+        // console.log(url)
+        let response = await data;
+        let coordenadas = {
+            "lat": response.data[0].lat,
+            "lon": response.data[0].lon
+        }
+
+        console.log(coordenadas.lat)
+        const urlPrevisao = `https://api.openweathermap.org/data/2.5/onecall?lat=${coordenadas.lat}&lon=${coordenadas.lon}&appid=${token}&lang=pt_br&units=metric`
+        let dataPrevisao = axios.get(urlPrevisao)
+
+        let responsePrevisao = await dataPrevisao
+
+
+        return responsePrevisao.data
+
     }
 }
+
+
 
 export default Weather;
