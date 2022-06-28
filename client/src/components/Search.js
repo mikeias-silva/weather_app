@@ -8,7 +8,7 @@ const Search = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
     // alert(`cidade: ${city}`);
-    const url = `http://localhost:3000/${city}`;
+    const url = `http://localhost:3000/previsaoTempo/${city}`;
     axios.get(url)
       .then(function (response) {
         console.log(response.data)
