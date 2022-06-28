@@ -50,7 +50,8 @@ const Weather = {
         let dataPrevisao = axios.get(urlPrevisao)
         let responsePrevisao = await dataPrevisao
         let dados = Weather.parsePrevisaoTempo(responsePrevisao.data);
-        return responsePrevisao.data
+        dados.cidade = city
+        return dados
     },
     async getCoordenadas(city) {
         const url = `http://api.openweathermap.org/geo/1.0/direct?q=${city}&appid=${token}&limit=1`;
@@ -64,9 +65,11 @@ const Weather = {
     },
     parsePrevisaoTempo(data) {
 
+     
+
         let minutos = data.minutely;
 
-        const newMinutos = minutos.map((minuto) => ({ "minuto": minutoAMinuto(minuto), "precipitacao": minuto.precipitation }))
+        const parseMinutos = minutos.map((minuto) => ({ "minuto": minutoAMinuto(minuto), "precipitacao": minuto.precipitation }))
 
         function minutoAMinuto(minuto) {
             let minutoParse = new Date(minuto.dt * 1000).toLocaleTimeString();
@@ -78,8 +81,8 @@ const Weather = {
             return horaParse
         }
         let proximasHoras = data.hourly
-        const horaEmHora = proximasHoras.map(function (hora, index) {
-            index = {
+        const parseHoras = proximasHoras.map((hora, index) => (
+            {
                 "hora": horaEmHoraParse(hora.dt),
                 "temperatura": hora.temp,
                 "sensacao_termica": hora.feels_like,
@@ -88,15 +91,43 @@ const Weather = {
                 "tempo": hora.weather[0].description,
                 "icon": hora.weather[0].icon,
                 "probabilidade": hora.pop,
+                "chuva": hora.rain ? hora.rain : ''
 
-            }
-            if (hora.hasOwnProperty('rain')) {
-                index.rain = hora.rain
-            }
-            return index
-        });
+            })
 
-        // console.log(horaEmHora)
+        );
+
+        let proximosDias = data.daily
+
+        const parseDias = proximosDias.map((dia, index) => (
+            {
+                "dia": new Date(dia.dt * 1000).toLocaleDateString(),
+                "nascerSol": new Date(dia.sunrise * 1000).toLocaleTimeString(),
+                "porSol": new Date(dia.sunset * 1000).toLocaleTimeString(),
+                "temperatura": {
+                    "dia": dia.temp.day,
+                    "minima": dia.temp.min,
+                    "maxima": dia.temp.max,
+                    "noite": dia.temp.night,
+                    "manha": dia.temp.morn
+                },
+                "sensacaoTermica": {
+                    "dia": dia.feels_like.day,
+                    "noite": dia.feels_like.night,
+                    "manha": dia.feels_like.morn
+                },
+                "pressao": dia.pressure,
+                "umidade": dia.humidity,
+                "velocidadeVento": dia.wind_speed,
+                "tempo": dia.weather[0].description,
+                "icon": dia.weather[0].icon,
+                "nuvens": dia.clouds,
+                "probabilidade": dia.pop,
+                "chuva": dia.rain ? dia.rain : ''
+            }
+        ))
+
+
         const previsaoTempo = {
             "atual": {
                 "dataHoraAtualizacao": new Date(data.current.dt * 1000).toLocaleString(),
@@ -111,12 +142,13 @@ const Weather = {
                 "tempo": data.current.weather[0].description,
                 "icon": data.current.weather[0].icon,
             },
-            "minutoAMinuto": newMinutos,
-            "proximas48Horas": horaEmHora,
-            
+            "minutoAMinuto": parseMinutos,
+            "proximas48Horas": parseHoras,
+            "proximos7dias": parseDias
+
         }
 
-        console.log(previsaoTempo);
+        return previsaoTempo
     }
 }
 
