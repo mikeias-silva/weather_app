@@ -91,7 +91,7 @@ const Weather = {
                 "tempo": hora.weather[0].description,
                 "icon": hora.weather[0].icon,
                 "probabilidade": hora.pop,
-                "chuva": hora.rain ? hora.rain : ''
+                "chuva": hora.rain ? hora.rain : '0'
 
             })
 
@@ -123,7 +123,7 @@ const Weather = {
                 "icon": dia.weather[0].icon,
                 "nuvens": dia.clouds,
                 "probabilidade": dia.pop,
-                "chuva": dia.rain ? dia.rain : ''
+                "chuva": dia.rain ? dia.rain : '0'
             }
         ))
 
